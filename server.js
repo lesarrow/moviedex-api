@@ -8,12 +8,17 @@ const helmet = require('helmet');
 const cors = require('cors');
 
 const server = express();
-server.use(morgan('common'));
+
+const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'common';
+server.use(morgan(morganSetting));
+
 server.use(helmet());
 
 server.use(function validateBearerKey(req,res,next) {
 
-        if (!req.get('Authorization'))
+        let error = false;
+
+        if (!req.get('Authorization')) 
             return res.status(401).json({error: 'Authorization header missing'});
 
         if (req.get('Authorization').split(' ')[1] !== process.env.KEY)
@@ -24,9 +29,18 @@ server.use(function validateBearerKey(req,res,next) {
 
 server.use(cors());
 
-console.log(process.env.KEY);
+server.use((error, req, res, next) => {
+    let response
+    if (process.env.NODE_ENV === 'production') {
+      response = { error: { message: 'server error' }}
+    } else {
+      response = { error }
+    }
+    res.status(500).json(response)
+  })
+  
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 
 function filterByGenre(json, genre) {
@@ -74,5 +88,5 @@ server.get("/movie", (req,res) => {
 })
 
 server.listen(PORT, () => {
-    console.log(`Server listening on port: ${PORT}`);
+//    console.log(`Server listening on port: ${PORT}`);
 })
