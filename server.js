@@ -46,14 +46,14 @@ const PORT = process.env.PORT || 8000;
 function filterByGenre(json, genre) {
 
     return json.filter((movie) => {
-        return movie.genre === genre;
+        return movie.genre.toUpperCase() === genre.toUpperCase();
     });
 }
 
 
 function filterByCountry(json, country) {
     return json.filter((movie) => {
-        return movie.country === country;
+        return movie.country.toUpperCase() === country.toUpperCase();
     });
 }
 
