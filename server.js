@@ -24,8 +24,6 @@ server.use(function validateBearerKey(req,res,next) {
 
 server.use(cors());
 
-console.log(process.env.KEY);
-
 const PORT = 8000;
 
 
